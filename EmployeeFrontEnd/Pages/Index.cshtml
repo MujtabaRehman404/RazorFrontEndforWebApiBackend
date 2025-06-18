@@ -1,0 +1,336 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">CRUD Employee</h1>
+</div>
+
+<div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+    <button class="Btn-create" data-bs-toggle="modal" data-bs-target="#employeeModal">
+        <div class="sign">+</div>
+        <div class="text">Create</div>
+    </button>
+</div>
+
+
+
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Department</th>
+            <th>Martial Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+</table>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="employeeForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeModalLabel">Create Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* <div class="mb-3">
+                        <label for="employeeId" class="form-label">Id</label>
+                        <input type="text" class="form-control" id="employeeId" placeholder="Enter employee ID" />
+                    </div> *@
+                    <div class="mb-3">
+                        <label for="employeeName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="employeeName" placeholder="Enter full name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeAge" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="employeeAge" min="0" placeholder="Enter age" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeDepartment" class="form-label">Department</label>
+                        <input type="text" class="form-control" id="employeeDepartment" placeholder="Enter department" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeMartialStatus" class="form-label">Martial Status</label>
+                        <input type="text" class="form-control" id="employeeMartialStatus" placeholder="Enter marital status" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeYearOfExp" class="form-label">Years Of Experience</label>
+                        <input type="number" class="form-control" id="employeeYearOfExp" min="0" placeholder="Enter Years Of Experience" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success addEmp">Add Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="empEditModal" tabindex="-1" aria-labelledby="empEditModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="employeeForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="empEditModal">Update Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* <div class="mb-3">
+                        <label for="employeeId" class="form-label">Id</label>
+                        <input type="text" class="form-control" id="employeeId" placeholder="Enter employee ID" />
+                    </div> *@
+                    <div class="mb-3">
+                        <label for="employeeName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="employeeNameupdate" placeholder="Enter full name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeAge" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="employeeAgeupdate" min="0" placeholder="Enter age" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeDepartment" class="form-label">Department</label>
+                        <input type="text" class="form-control" id="employeeDepartmentupdate" placeholder="Enter department" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeMartialStatus" class="form-label">Martial Status</label>
+                        <input type="text" class="form-control" id="employeeMartialStatusupdate" placeholder="Enter marital status" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeeYearOfExp" class="form-label">Years Of Experience</label>
+                        <input type="number" class="form-control" id="employeeYearOfExpupdate" min="0" placeholder="Enter Years Of Experience" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success updateEmp">Update Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var updateId = "";
+            $(document).on("click", ".edit-button", function () {
+            const id = $(this).data("id");
+            updateId = id;
+            const modal = new bootstrap.Modal(document.getElementById('empEditModal'));
+
+            modal.show();
+
+            $.ajax({
+                         url: `https://localhost:7161/Employee/GetEmployeesById/${id}`,
+                        type: 'GET',
+                        success: function (response) {
+                             console.log(response);
+        $("#employeeNameupdate").val(response.name);
+        $("#employeeAgeupdate").val(response.age);
+        $("#employeeDepartmentupdate").val(response.department);
+        $("#employeeMartialStatusupdate").val(response.martialStatus);
+        $("#employeeYearOfExpupdate").val(response.yearsOfExperience);
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: 'Employee Not Found',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+
+            });
+
+
+             $(document).on("click", ".updateEmp", function (e) {
+                 e.preventDefault();
+                const updatedEmployee = {
+            name: $("#employeeNameupdate").val(),
+            age: parseInt($("#employeeAgeupdate").val()),
+            department: $("#employeeDepartmentupdate").val(),
+            martialStatus: $("#employeeMartialStatusupdate").val(),
+            yearsOfExperience: parseInt($("#employeeYearOfExpupdate").val())
+        };
+
+            $.ajax({
+                         url: `https://localhost:7161/Employee/UpdateEmployee/${updateId}`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(updatedEmployee),
+                        success: function (response) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Updated successfully',
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                timer: 1000
+                            });
+
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: 'Employee Not Found',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+
+            });
+
+
+            $(document).on("click", ".delete-button", function () {
+            const id = $(this).data("id");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to undo this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `https://localhost:7161/Employee/DeleteEmployee/${id}`,
+                        type: 'DELETE',
+                        success: function () {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Deleted successfully',
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                timer: 1000
+                            });
+
+                            setTimeout(function () {
+                                location.reload(); 
+                            }, 1000);
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'Error',
+                                title: 'Delete Failed',
+                                text: 'Could not delete the employee.',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+
+         $(".addEmp").on("click", function(e) {
+            e.preventDefault();
+         // Fetch values from inputs by their IDs
+         
+            const employeeData = {
+                name: $("#employeeName").val(),
+                age: $("#employeeAge").val(),
+                department: $("#employeeDepartment").val(),
+                martialStatus: $("#employeeYearOfExp").val(),
+                yearsOfExperience: $("#employeeYearOfExp").val(),
+            };
+
+            $.ajax({
+                url: 'https://localhost:7161/Employee/CreateEmployee',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(employeeData),
+                success: function(response) {
+                    Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Employee created!',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true
+            });
+
+            setTimeout(function () {
+                location.reload();
+            }, 1000);
+                },
+                error: function(xhr, status, error) {
+                     Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to create employee.',
+                confirmButtonText: 'OK'
+            });
+                }
+            });
+        
+        });
+
+            $('#example').DataTable({
+                ajax: {
+                    url: 'https://localhost:7161/Employee/GetEmployees', // Replace with your actual API
+                    dataSrc: '' // assuming your API returns a plain array
+                },
+                columns: [
+                    {
+            data: null, 
+            render: function (data, type, row, meta) {
+                return meta.row + 1;
+            }
+        },
+                    { data: 'name' },
+                    { data: 'age' },
+                    { data: 'department' },
+                    { data: 'martialStatus' },
+                            {
+            data: null,
+            render: function (data, type, row) {
+                return `
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button data-id='${row.id}' aria-label="Delete item" class="delete-button" style="background: none; border: none; cursor: pointer; padding: 4px;width:2em;height:2em;">
+                            <svg viewBox="0 -10 64 74" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px;">
+                                <g id="trash-can">
+                                    <rect x="16" y="24" width="32" height="30" rx="3" ry="3" fill="#e74c3c"></rect>
+                                    <g transform-origin="12 18" id="lid-group">
+                                        <rect x="12" y="12" width="40" height="6" rx="2" ry="2" fill="#c0392b"></rect>
+                                        <rect x="26" y="8" width="12" height="4" rx="2" ry="2" fill="#c0392b"></rect>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                        <button data-id='${row.id}' class="edit-button"  style="background: none; border: none; cursor: pointer; padding: 4px;">
+                            <svg viewBox="0 0 512 512" style="width: 20px; height: 20px;">
+                                <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231z"></path>
+                            </svg>
+                        </button>
+                    </div>`;
+            }
+        }
+                ]
+            });
+        });
+    </script>
+}
