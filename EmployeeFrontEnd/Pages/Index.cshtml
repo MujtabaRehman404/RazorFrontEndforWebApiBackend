@@ -54,9 +54,17 @@
                         <label for="employeeAge" class="form-label">Age</label>
                         <input type="number" class="form-control" id="employeeAge" min="0" placeholder="Enter age" />
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-1">
                         <label for="employeeDepartment" class="form-label">Department</label>
-                        <input type="text" class="form-control" id="employeeDepartment" placeholder="Enter department" />
+                    </div>
+                    <div class="mb-3">
+                        <select id="employeeDepartment" class="form-control" width="300" style="padding:30px;">
+                            <option disabled>Select Department</option>
+                            <option value="1">Software Development</option>
+                            <option value="2">Software Testing</option>
+                            <option value="3">Human Resource</option>
+                            <option value="4">Accounting</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="employeeMartialStatus" class="form-label">Martial Status</label>
@@ -126,6 +134,13 @@
     <script>
         $(document).ready(function () {
             var updateId = "";
+
+             $('#employeeDepartment').select2({
+            placeholder: "Select a Department",
+            allowClear: true,
+            dropdownParent: $('#employeeModal') // This is the fix for Bootstrap modal context
+        });
+
             $(document).on("click", ".edit-button", function () {
             const id = $(this).data("id");
             updateId = id;
@@ -250,12 +265,14 @@
          // Fetch values from inputs by their IDs
          
             const employeeData = {
-                name: $("#employeeName").val(),
-                age: $("#employeeAge").val(),
-                department: $("#employeeDepartment").val(),
-                martialStatus: $("#employeeYearOfExp").val(),
-                yearsOfExperience: $("#employeeYearOfExp").val(),
+                      name: $("#employeeName").val(),
+                        age: parseInt($("#employeeAge").val()),
+                            departmentId: parseInt($("#employeeDepartment").val()), // must match C# property
+                             martialStatus: $("#employeeMartialStatus").val(),
+                            yearsOfExperience: parseInt($("#employeeYearOfExp").val())
             };
+
+         
 
             $.ajax({
                 url: 'https://localhost:7161/Employee/CreateEmployee',
@@ -303,7 +320,7 @@
         },
                     { data: 'name' },
                     { data: 'age' },
-                    { data: 'department' },
+                    { data: 'departmentName' },
                     { data: 'martialStatus' },
                             {
             data: null,
@@ -330,6 +347,7 @@
             }
         }
                 ]
+
             });
         });
     </script>
