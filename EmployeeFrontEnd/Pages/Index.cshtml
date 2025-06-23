@@ -8,6 +8,21 @@
     <h1 class="display-4">CRUD Employee</h1>
 </div>
 
+<div style="display: flex; justify-content: flex-start;">
+    <button class="add-bulk" data-bs-toggle="modal" data-bs-target="#uploadCsv">
+        <span>
+            <svg height="24"
+                 width="24"
+                 viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
+            </svg>
+            Upload Bulk
+        </span>
+    </button>
+</div>
+
 <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
     <button class="Btn-create" data-bs-toggle="modal" data-bs-target="#employeeModal">
         <div class="sign">+</div>
@@ -84,6 +99,26 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="uploadCsv" tabindex="-1" aria-labelledby="uploadCsv" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="employeeForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadCsvTitle">Upload CSV</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" id="fileCsv" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success uploadCsv">Upload CSV</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Edit Modal -->
 <div class="modal fade" id="empEditModal" tabindex="-1" aria-labelledby="empEditModal" aria-hidden="true">
@@ -183,6 +218,51 @@
 
             });
 
+             $(document).on("click", ".uploadCsv", function (e) {
+                 e.preventDefault();
+
+             var fileInput = $('#fileCsv')[0].files[0];
+   
+            //  if (!fileInput) {
+            // alert("Please select a file.");
+            // return;
+            //  }
+
+        var formData = new FormData();
+        formData.append("file", fileInput);
+
+                  $.ajax({
+                         url: `https://localhost:7161/Employee/UpdateBulkEmployeeCsv/`,
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,      // ❗️Important
+                        processData: false,      // ❗️Important
+                        success: function () {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Bulk Employees Uploaded successfully',
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                timer: 1000
+                            });
+
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: 'Error Occured - Make Sure Its a CSV File',
+                                confirmButtonText: 'OK, I Understand'
+                            });
+                        }
+                    });
+
+             });
 
              $(document).on("click", ".updateEmp", function (e) {
                  e.preventDefault();
