@@ -1,0 +1,37 @@
+﻿@page
+@model EmployeeFrontEnd.Pages.testpage.testapiModel
+@{
+}
+
+<button class="btn btn-primary btn-lg" id="hitApiBtn">Hit Api</button>
+<p>API about to hit in: <span id="apiresponsecounter"></span></p>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#hitApiBtn").on("click", function () {
+                let counter = 0;
+                $("#apiresponsecounter").text(counter);
+
+                const interval = setInterval(() => {
+                    counter++;
+                    $("#apiresponsecounter").text(counter);
+                }, 1000);
+
+                $.ajax({
+                    url: "https://localhost:7161/Employee/hitApi",
+                    type: "GET",
+                    success: function (data) {
+                        clearInterval(interval); 
+                        alert("Received");
+                    },
+                    error: function (err) {
+                        console.error("Error:", err);
+                    }
+                });
+            });
+        });
+    </script>
+}
